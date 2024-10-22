@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Jenkins Setup - Blog</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0;
+        }
+
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+            padding: 20px;
+            background-color: white;
+        }
+
+        h2 {
+            color: #333;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 10px;
+        }
+
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-left: 3px solid #4CAF50;
+            overflow-x: auto;
+        }
+
+        code {
+            color: #d63384;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .code-block {
+            background: #333;
+            color: #fff;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+
+        footer {
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            position: relative;
+            width: 100%;
+        }
+
+        footer a {
+            color: white;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+
+        .footer-icons img {
+            width: 20px;
+            vertical-align: middle;
+        }
+
+        .footer-icons {
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Jenkins Setup</h1>
+</header>
+
+<div class="container">
+    <h2>Introduction</h2>
+    <p>Are you looking forward to learning Jenkins right from Zero (installation) to Hero (building end-to-end pipelines)? Then you are at the right place.</p>
+
+    <h2>Installation on EC2 Instance</h2>
+    <p>Install Jenkins, configure Docker as an agent, set up CICD, deploy applications to Kubernetes, and much more.</p>
+    <img src="https://user-images.githubusercontent.com/43399466/216040281-6c8b89c3-8c22-4620-ad1c-8edd78eb31ae.png" alt="Jenkins Installation">
+
+    <h2>AWS EC2 Instance</h2>
+    <ul>
+        <li>Go to AWS Console</li>
+        <li>Instances (running)</li>
+        <li>Launch instances</li>
+    </ul>
+    <img src="https://user-images.githubusercontent.com/43399466/215974891-196abfe9-ace0-407b-abd2-adcffe218e3f.png" alt="EC2 Instance Launch">
+
+    <h2>Install Jenkins</h2>
+    <h3>Pre-Requisites:</h3>
+    <ul>
+        <li>Java (JDK)</li>
+    </ul>
+
+    <h3>Commands to Install Java and Jenkins:</h3>
+    <div class="code-block">
+        <pre><code>
+sudo apt update
+sudo apt install openjdk-17-jre
+java -version
+curl -fsSL https://pkg.jenkins.io/debian/jenkins.io-2023.key | sudo tee \
+  /usr/share/keyrings/jenkins-keyring.asc > /dev/null
+echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] \
+  https://pkg.jenkins.io/debian binary/ | sudo tee \
+  /etc/apt/sources.list.d/jenkins.list > /dev/null
+sudo apt-get update
+sudo apt-get install jenkins
+        </code></pre>
+    </div>
+
+    <h2>Configuring Security Rules in AWS EC2</h2>
+    <p>To access Jenkins externally, open port 8080 in the inbound traffic rules. Here’s how:</p>
+    <ol>
+        <li>EC2 > Instances > Click on &lt;Instance-ID&gt;</li>
+        <li>In the bottom tabs, click on Security</li>
+        <li>Add inbound traffic rules (you can allow TCP 8080 or all traffic)</li>
+    </ol>
+    <img src="https://user-images.githubusercontent.com/43399466/215975712-2fc569cb-9d76-49b4-9345-d8b62187aa22.png" alt="Security Groups Setup">
+
+    <h2>Login to Jenkins</h2>
+    <p>Use the following URL to log in to Jenkins:</p>
+    <p><code>http://&lt;ec2-instance-public-ip-address&gt;:8080</code></p>
+    <p>Get the EC2 public IP address from your AWS console. Once logged in, run this command to get the Jenkins Admin Password:</p>
+    <div class="code-block">
+        <pre><code>sudo cat /var/lib/jenkins/secrets/initialAdminPassword</code></pre>
+    </div>
+
+    <h2>Jenkins Setup and Configuration</h2>
+    <p>After logging in, click <strong>Install suggested plugins</strong> and wait for Jenkins to install the necessary plugins. You can then create an admin user or skip this step.</p>
+    <img src="https://user-images.githubusercontent.com/43399466/215961440-3f13f82b-61a2-4117-88bc-0da265a67fa7.png" alt="Jenkins Installation Success">
+
+    <h2>Install Docker Pipeline Plugin</h2>
+    <p>To integrate Docker with Jenkins, install the Docker Pipeline plugin:</p>
+    <ol>
+        <li>Log in to Jenkins</li>
+        <li>Go to <strong>Manage Jenkins &gt; Manage Plugins</strong></li>
+        <li>Search for "Docker Pipeline" and install it</li>
+    </ol>
+    <img src="https://user-images.githubusercontent.com/43399466/215973898-7c366525-15db-4876-bd71-49522ecb267d.png" alt="Docker Pipeline Plugin Installation">
+
+    <h2>Docker Slave Configuration</h2>
+    <p>Run the following commands to install Docker and configure the Jenkins and Ubuntu users:</p>
+    <div class="code-block">
+        <pre><code>sudo apt update
+sudo apt install docker.io
+sudo su - 
+usermod -aG docker jenkins
+usermod -aG docker ubuntu
+systemctl restart docker
+        </code></pre>
+    </div>
+    <p>Once done, restart Jenkins:</p>
+    <div class="code-block">
+        <pre><code>http://&lt;ec2-instance-public-ip&gt;:8080/restart</code></pre>
+    </div>
+
+    <h2>GitHub Webhooks</h2>
+    <p>To enable Jenkins GitHub integration, add the following webhook in your GitHub repository:</p>
+    <p><code>http://44.196.192.232:8080/github-webhook/</code></p>
+</div>
+
+<footer>
+    <p>&copy; 2024 Jenkins Zero to Hero | Powered by Aayan</p>
+    <div class="footer-icons">
+        <p>Created by <strong>Atul Rajput</strong></p>
+        <a href="https://github.com/AtulRajput01" target="_blank">
+            <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub Icon">
+        </a>
+        <a href="https://www.linkedin.com/in/atul-rajput/" target="_blank">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png" alt="LinkedIn Icon">
+        </a>
+    </div>
+</footer>
+
+</body>
+</html>
