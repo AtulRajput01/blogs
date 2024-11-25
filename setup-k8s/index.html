@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Kind, kubectl, AWS CLI, eksctl Setup - Blog</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0;
+        }
+
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+            padding: 20px;
+            background-color: white;
+        }
+
+        h2 {
+            color: #333;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 10px;
+        }
+
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-left: 3px solid #4CAF50;
+            overflow-x: auto;
+        }
+
+        code {
+            color: #d63384;
+        }
+
+        .code-block {
+            background: #333;
+            color: #fff;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+
+        footer {
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            position: relative;
+            width: 100%;
+        }
+
+        footer a {
+            color: white;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+
+        .footer-icons img {
+            width: 20px;
+            vertical-align: middle;
+        }
+
+        .footer-icons {
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Setting up Kind, kubectl, AWS CLI, and eksctl</h1>
+</header>
+
+<div class="container">
+    <h2>Introduction</h2>
+    <p>Welcome! This guide will walk you through the setup of <strong>Kind</strong>, <strong>kubectl</strong>, <strong>AWS CLI</strong>, and <strong>eksctl</strong> on a Linux system. By the end, you'll be equipped to create Kubernetes clusters locally and manage AWS EKS environments effectively.</p>
+
+    <h2>Prerequisites</h2>
+    <ul>
+        <li>A Linux machine (Ubuntu/Debian preferred).</li>
+        <li>Basic tools like <code>curl</code>, <code>wget</code>, and <code>unzip</code> installed.</li>
+        <li>Sudo privileges.</li>
+    </ul>
+
+    <h2>The Setup Script</h2>
+    <p>Save the following script as <code>setup.sh</code> on your system and run it to install all necessary tools:</p>
+
+    <div class="code-block">
+        <pre><code>
+#!/bin/bash
+
+set -e
+
+echo "Starting setup for Docker, Kind, kubectl, AWS CLI, and eksctl on Linux..."
+
+# Install Docker
+echo "Installing Docker..."
+sudo apt update
+sudo apt install -y docker.io
+sudo systemctl enable docker
+sudo systemctl start docker
+echo "Docker installed successfully: $(docker --version)"
+
+# Add the current user to the Docker group
+echo "Adding the current user to the Docker group..."
+sudo usermod -aG docker $USER
+echo "Please log out and log back in to apply Docker group changes for your user."
+
+# Install Kind
+echo "Installing Kind..."
+curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.20.0/kind-linux-amd64
+chmod +x ./kind
+sudo mv ./kind /usr/local/bin/kind
+echo "Kind installed successfully: $(kind version)"
+
+# Install kubectl
+echo "Installing kubectl..."
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+chmod +x kubectl
+sudo mv kubectl /usr/local/bin/kubectl
+echo "kubectl installed successfully: $(kubectl version --client --short)"
+
+# Install AWS CLI
+echo "Installing AWS CLI..."
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
+echo "AWS CLI installed successfully: $(aws --version)"
+rm -rf awscliv2.zip aws
+
+# Install eksctl
+echo "Installing eksctl..."
+curl -L "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_Linux_amd64.tar.gz" -o eksctl.tar.gz
+tar -xzf eksctl.tar.gz
+sudo mv eksctl /usr/local/bin
+echo "eksctl installed successfully: $(eksctl version)"
+rm -rf eksctl.tar.gz
+
+# Optional: Create a Kind Cluster
+read -p "Do you want to create a Kind cluster now? (y/n): " create_cluster
+if [[ "$create_cluster" == "y" ]]; then
+    kind create cluster --name my-cluster
+    kubectl cluster-info
+    echo "Kind cluster 'my-cluster' created successfully!"
+else
+    echo "Skipping Kind cluster creation."
+fi
+
+echo "Setup completed successfully!"
+
+        </code></pre>
+    </div>
+
+    <h2>Executing the Script</h2>
+    <ol>
+        <li>Make the script executable:</li>
+        <div class="code-block">
+            <pre><code>chmod +x setup.sh</code></pre>
+        </div>
+        <li>Run the script:</li>
+        <div class="code-block">
+            <pre><code>sudo ./setup.sh</code></pre>
+        </div>
+        <li>Follow the prompts to complete the installation.</li>
+    </ol>
+
+    <h2>Verification</h2>
+    <p>After running the script, verify the installations using the following commands:</p>
+    <ul>
+        <li><code>kind version</code></li>
+        <li><code>kubectl version --client --short</code></li>
+        <li><code>aws --version</code></li>
+        <li><code>eksctl version</code></li>
+    </ul>
+
+    <h2>Optional: Creating a Kind Cluster</h2>
+    <p>If you skipped cluster creation during the script execution, you can create one later using:</p>
+    <div class="code-block">
+        <pre><code>kind create cluster --name my-cluster</code></pre>
+    </div>
+
+    <h2>Conclusion</h2>
+    <p>With these tools installed, you are ready to build and manage Kubernetes clusters locally and on AWS. Enjoy your Kubernetes journey!</p>
+</div>
+
+<footer>
+    <p>&copy; 2024 Kubernetes Setup Guide | Powered by Atul Rajput</p>
+    <div class="footer-icons">
+        <p>Created by <strong>Atul Rajput</strong></p>
+        <a href="https://github.com/AtulRajput01" target="_blank">
+            <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub Icon">
+        </a>
+        <a href="https://www.linkedin.com/in/atul-rajput/" target="_blank">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png" alt="LinkedIn Icon">
+        </a>
+    </div>
+</footer>
+
+</body>
+</html>
