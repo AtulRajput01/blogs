@@ -125,6 +125,11 @@ echo "Adding the current user to the Docker group..."
 sudo usermod -aG docker $USER
 echo "Please log out and log back in to apply Docker group changes for your user."
 
+# Install unzip (pre-requisite for AWS CLI)
+echo "Installing unzip..."
+sudo apt install -y unzip
+echo "Unzip installed successfully: $(unzip -v | head -n 1)"
+
 # Install Kind
 echo "Installing Kind..."
 curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.20.0/kind-linux-amd64
@@ -154,16 +159,6 @@ tar -xzf eksctl.tar.gz
 sudo mv eksctl /usr/local/bin
 echo "eksctl installed successfully: $(eksctl version)"
 rm -rf eksctl.tar.gz
-
-# Optional: Create a Kind Cluster
-read -p "Do you want to create a Kind cluster now? (y/n): " create_cluster
-if [[ "$create_cluster" == "y" ]]; then
-    kind create cluster --name my-cluster
-    kubectl cluster-info
-    echo "Kind cluster 'my-cluster' created successfully!"
-else
-    echo "Skipping Kind cluster creation."
-fi
 
 echo "Setup completed successfully!"
 
