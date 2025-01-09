@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Learn how to manage objects in your S3 bucket using AWS CLI. This step-by-step guide covers how to list objects and delete specific files from your S3 storage.">
+    <title>Managing Your S3 Bucket with AWS CLI: Listing and Deleting Objects</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #eef2f3;
+            color: #333;
+        }
+
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+
+        h1 {
+            border-bottom: 2px solid #27ae60;
+            padding-bottom: 10px;
+        }
+
+        code,
+        pre {
+            background-color: #f9f9f9;
+            padding: 10px;
+            display: block;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            border-left: 4px solid #27ae60;
+            margin: 20px 0;
+        }
+
+        ul {
+            margin: 20px 0;
+            padding-left: 20px;
+        }
+
+        a {
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        footer {
+            margin-top: 30px;
+            padding: 10px;
+            background-color: #27ae60;
+            color: white;
+            text-align: center;
+        }
+
+        footer a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Managing Your S3 Bucket with AWS CLI: Listing and Deleting Objects</h1>
+    <p>Amazon S3 is a powerful service that allows you to store and manage your data. In this guide, we will show you how to manage the objects stored in your S3 bucket using AWS CLI. Specifically, we'll walk you through the process of listing the contents of your bucket and deleting specific objects to keep your storage organized.</p>
+
+    <h2>Prerequisites</h2>
+    <p>Before you begin, make sure you have the following:</p>
+    <ul>
+        <li>An <strong>AWS account</strong> with access to S3</li>
+        <li>A configured <strong>AWS CLI</strong> with the appropriate permissions to access your S3 bucket</li>
+        <li>Download and install the <a href="https://aws.amazon.com/cli/" target="_blank">AWS CLI</a></li>
+    </ul>
+
+    <h2>Step 1: Install and Configure AWS CLI</h2>
+    <p>First, you'll need to install the AWS CLI. You can follow the instructions in the official AWS documentation for your operating system:</p>
+    <ul>
+        <li>For Windows: <a href="https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2-windows.html" target="_blank">Install AWS CLI on Windows</a></li>
+        <li>For macOS: <a href="https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2-mac.html" target="_blank">Install AWS CLI on macOS</a></li>
+        <li>For Linux: <a href="https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2-linux.html" target="_blank">Install AWS CLI on Linux</a></li>
+    </ul>
+
+    <p>Once installed, configure your AWS CLI with your credentials:</p>
+    <pre><code>aws configure</code></pre>
+<img src="https://github.com/user-attachments/assets/d5c9d486-9589-41ee-9976-2e56577669af" alt="AWS Configure Screenshot">
+    <p>You'll be prompted to enter the following information:</p>
+    <ul>
+        <li><strong>AWS Access Key ID</strong>: You can find this in your AWS account (IAM section).</li>
+        <li><strong>AWS Secret Access Key</strong>: Also found in your IAM settings.</li>
+        <li><strong>Default region name</strong>: e.g., <code>us-east-1</code></li>
+    </ul>
+
+    <h2>Step 2: List the Contents of Your S3 Bucket</h2>
+    <p>Once your AWS CLI is set up, use the following command to list all objects in your S3 bucket. Replace <code>your-bucket-name</code> with your actual bucket name:</p>
+    <pre><code>aws s3 ls s3://your-bucket-name --recursive</code></pre>
+
+    <p>Example output:</p>
+    <pre><code>
+2025-01-07 12:30:02     410650 example-file1.jpg
+2025-01-07 12:42:05     410650 example-file2.jpg
+2025-01-07 12:45:57     410650 example-file3.jpg
+2025-01-07 15:38:14      13089 example-file4.png
+...
+    </code></pre>
+
+    <p>In this case, we have a bucket named <code>your-bucket-name</code>, and the objects are listed with their timestamps and sizes.</p>
+
+    <h2>Step 3: Delete Specific Objects from Your S3 Bucket</h2>
+    <p>Once you've identified the object you want to delete, use the <code>s3 rm</code> command to remove it from your bucket. For example, to delete <code>example-file1.jpg</code>, run:</p>
+    <pre><code>aws s3 rm s3://your-bucket-name/example-file1.jpg</code></pre>
+
+    <p>Example confirmation message:</p>
+    <pre><code>delete: s3://your-bucket-name/example-file1.jpg</code></pre>
+
+    <p>This confirms that the object has been successfully deleted from the bucket.</p>
+
+    <h2>Conclusion</h2>
+    <p>With these simple AWS CLI commands, you can effectively manage your S3 bucket by listing objects and deleting unwanted files. Regularly managing your S3 bucket can help you optimize storage and reduce unnecessary costs.</p>
+
+    <p>If you found this guide useful, feel free to share it with your friends and colleagues who might also benefit from managing their S3 storage more efficiently.</p>
+
+    <footer>
+        <p>Written by <strong>Atul Rajput</strong>. Visit my website at <a href="http://www.atulrajput.tech" target="_blank">www.atulrajput.tech</a></p>
+    </footer>
+</body>
+
+</html>
+
